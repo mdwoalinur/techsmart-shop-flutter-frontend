@@ -1,0 +1,4 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Local HTTP is allowed only for debug builds used with ADB reverse. -->
+    <application android:usesCleartextTraffic="true" />
+</manifest>

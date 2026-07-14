@@ -1,0 +1,5 @@
+# Order Submission, Idempotency, and Snapshots
+
+Existing POS Sale was rejected for direct reuse because it requires employee/warehouse context, marks sales completed, deducts stock, creates notifications/payment-due effects, and queues invoices. Phase 7 therefore uses a dedicated customer-order aggregate that can enter the internal fulfillment/Sale workflow later.
+
+Submission revalidates review ownership/expiry, cart fingerprint, current prices, stock visibility, delivery charge, and total in one transaction. A unique account/idempotency key returns the same confirmation on retry and rejects conflicting review reuse. The order snapshots product/variation names, SKU/code, unit price, tax, quantity, address, method, and note. Initial states are `PENDING_CONFIRMATION`, `NOT_STARTED`, and `UNPOSTED`. No payment, ledger entry, reservation, stock deduction, Sale, or invoice is created. Cart rows are deleted only after order, items, snapshot, and status history persist inside the transaction.
