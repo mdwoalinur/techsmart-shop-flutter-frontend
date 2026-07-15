@@ -1,41 +1,107 @@
-﻿# TechSmart Shop
+# TechSmart Shop Flutter Frontend
 
-Flutter customer storefront for the TechSmart Shop / TradeMaster IMS project.
+Flutter customer application for the **TechSmart Shop e-commerce platform**, powered by a Spring Boot backend.
 
-## Current verified scope
+<p>
+  <img src="https://img.shields.io/badge/Flutter-Mobile-02569B?style=flat-square&logo=flutter&logoColor=white" alt="Flutter">
+  <img src="https://img.shields.io/badge/Dart-Language-0175C2?style=flat-square&logo=dart&logoColor=white" alt="Dart">
+  <img src="https://img.shields.io/badge/Backend-Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/Platform-Android%20%26%20iOS-lightgrey?style=flat-square" alt="Android and iOS">
+</p>
 
-Phases 1 through 9 are complete, and Phase 9.1 adds Bangladesh Mobile Wallet Payment Simulation.
+## Overview
 
-Payment options now include:
+TechSmart Shop is a Flutter-based customer storefront for browsing products, managing a cart, placing orders, making simulated payments, tracking deliveries, receiving notifications, and managing post-order actions such as cancellation and return requests.
 
-- Mobile Wallet: backend-driven presentation simulation for bKash, Nagad, Rocket, Upay, SureCash, and Tap.
-- Online Payment: local development gateway simulation.
-- Bank Transfer: manual reference submission for admin review.
-- Mobile Transfer: manual mobile financial service reference submission for admin review.
-- Cash on Delivery: backend COD selection without marking the order paid.
+The application communicates with a secured Spring Boot REST API backend.
 
-## Mobile wallet simulation safety
+## Related Repository
 
-The mobile wallet flow is presentation-only. It does not call real wallet APIs, use official wallet logos, collect real wallet credentials, or let the client choose amount/success. The backend derives amount and result, masks wallet numbers, and posts accounting only after backend-confirmed success.
+- Spring Boot Backend: https://github.com/mdwoalinur/techsmart-shop-flutter-backend
 
-Local test credentials:
+## Main Features
 
-- Verification code: `123456`
-- Payment PIN: `12345`
+- Customer authentication
+- Product browsing and searching
+- Product details
+- Shopping cart
+- Checkout workflow
+- Multiple payment options
+- Mobile wallet payment simulation
+- Cash on Delivery
+- Order history
+- Order details
+- Order timeline
+- Order cancellation
+- Return request flow
+- Delivery tracking
+- Customer notifications
+- Notification preferences
+- Profile management
+- Backend-driven order and payment status
+- Customer data isolation
+- Physical-device-tested Android workflow
 
-Backend environment switches:
+## Technology Stack
 
-- `TECHSMART_MOBILE_WALLET_SIMULATION=true`
-- `TECHSMART_MOBILE_WALLET_RESULT=SUCCESS|PENDING|FAILED|CANCELLED`
+- Flutter
+- Dart
+- Provider
+- HTTP
+- REST API
+- Spring Boot Backend
+- JWT Authentication
+- Android
+- iOS
 
-## Validation
+## Payment Options
 
-Run from `E:\Dart_flutter\flutter_project\tech_smart_shop`:
+The application supports multiple payment workflows.
 
-```bash
-dart format .
-flutter pub get
-flutter analyze
-flutter test
-flutter build apk --debug
-```
+### Mobile Wallet
+
+Backend-driven payment simulation for:
+
+- bKash
+- Nagad
+- Rocket
+- Upay
+- SureCash
+- Tap
+
+### Other Payment Methods
+
+- Online Payment
+- Bank Transfer
+- Mobile Transfer
+- Cash on Delivery
+
+Cash on Delivery does not mark an order as paid during checkout. Payment collection and reconciliation are handled by the backend workflow.
+
+## Mobile Wallet Simulation
+
+The mobile wallet flow is intended for development, testing, and demonstration purposes only.
+
+It does not:
+
+- Connect to real wallet provider APIs
+- Collect real wallet credentials
+- Allow the client to determine payment amount
+- Allow the client to determine payment success
+- Automatically post accounting entries without backend confirmation
+
+The Spring Boot backend controls:
+
+- Payment amount
+- Provider selection validation
+- Payment result
+- Reference handling
+- Wallet number masking
+- Payment status
+- Accounting posting
+
+### Local Test Credentials
+
+```text
+Verification code: 123456
+Payment PIN: 12345
