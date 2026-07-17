@@ -1,4 +1,4 @@
-# TechSmart Shop Code Study
+﻿# TechSmart Shop Code Study
 
 TechSmart Shop is the customer-facing Android/iOS Flutter frontend for the existing TradeMaster Spring Boot business system. The Angular application remains the internal management frontend.
 
@@ -102,3 +102,14 @@ The multi-item return UI continuation is implemented and covered by tests. Autom
 - [51 - Customer tracking and delivery events](51_customer_tracking_and_delivery_events.md)
 - [52 - Phase 11 testing and physical validation](52_phase11_testing_and_physical_validation.md)
 - [53 - Local Phase 11 fixtures and safe demo data](53_local_phase11_fixtures_and_safe_demo_data.md)
+## Phase 12 - Reviews, Support, and Help Center
+
+- [54 - Reviews and Rating System](54_reviews_and_rating_system.md)
+- [55 - Support Ticket and Help Center](55_support_ticket_and_help_center.md)
+- [56 - Phase 12 Testing and Physical Validation](56_phase12_testing_and_physical_validation.md)
+## Final Polish, Demo, and Release Preparation
+
+- [57 - Final Polish and Release Preparation](57_final_polish_and_release_preparation.md)
+- [58 - Final Demo Script](58_final_demo_script.md)
+- [59 - Release Checklist](59_release_checklist.md)
+

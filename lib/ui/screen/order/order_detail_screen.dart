@@ -4,7 +4,9 @@ import '../../../model/product/catalog_models.dart';
 import '../../../model/order/order_models.dart';
 import '../../../model/tracking/order_tracking_models.dart';
 import '../../../provider/order_provider.dart';
+import '../../../provider/review_provider.dart';
 import 'return_request_screen.dart';
+import '../reviews/review_form_screen.dart';
 import '../payment/payment_screen.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -15,6 +17,7 @@ class OrderDetailScreen extends StatefulWidget {
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  String? _reviewLoadedFor;
   @override
   void initState() {
     super.initState();
@@ -27,6 +30,19 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   Widget build(BuildContext context) {
     final p = context.watch<OrderProvider>();
     final d = p.selected;
+    if (d != null &&
+        d.orderStatus == 'DELIVERED' &&
+        _reviewLoadedFor != d.orderNumber) {
+      _reviewLoadedFor = d.orderNumber;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _maybeReviewProvider(
+            context,
+            listen: false,
+          )?.loadReviewable(d.orderNumber);
+        }
+      });
+    }
     return Scaffold(
       appBar: AppBar(title: Text(widget.orderNumber)),
       body: d == null
@@ -36,6 +52,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   : Text(p.error!),
             )
           : ListView(
+              cacheExtent: 10000,
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
               children: [
                 Text(
@@ -52,7 +69,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     contentPadding: EdgeInsets.zero,
                     title: Text(i.productName),
                     subtitle: Text(
-                      '${i.variationName ?? i.productCode} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Qty ${i.quantity}',
+                      '${i.variationName ?? i.productCode} • Qty ${i.quantity}',
                     ),
                     trailing: Text(MoneyFormatter.taka(i.lineSubtotal)),
                   ),
@@ -93,6 +110,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 _CancellationSection(detail: d),
                 const Divider(),
                 _ReturnSection(detail: d),
+                const Divider(),
+                _OrderReviewSection(detail: d),
                 const Divider(),
                 FilledButton.icon(
                   onPressed: d.documentAvailable && !p.loadingDocument
@@ -399,5 +418,78 @@ class _ReturnSection extends StatelessWidget {
           ),
       ],
     );
+  }
+}
+
+class _OrderReviewSection extends StatelessWidget {
+  const _OrderReviewSection({required this.detail});
+  final OrderDetail detail;
+
+  @override
+  Widget build(BuildContext context) {
+    if (detail.orderStatus != 'DELIVERED') {
+      return const Text('Product reviews become available after delivery.');
+    }
+    final provider = _maybeReviewProvider(context);
+    if (provider == null) {
+      return const Text(
+        'Product reviews are available in the full customer app.',
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Product reviews', style: Theme.of(context).textTheme.titleLarge),
+        if (provider.state == ReviewLoadState.loading &&
+            provider.reviewableItems.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: LinearProgressIndicator(),
+          )
+        else if (provider.error != null && provider.reviewableItems.isEmpty)
+          Text(provider.error!, style: const TextStyle(color: Colors.red))
+        else if (provider.reviewableItems.isEmpty)
+          const Text('No reviewable items found for this delivered order.')
+        else
+          ...provider.reviewableItems.map(
+            (item) => ListTile(
+              key: Key('reviewable-${item.orderItemId}'),
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.rate_review_outlined),
+              title: Text(item.productName),
+              subtitle: Text(
+                item.alreadyReviewed
+                    ? 'Already reviewed${item.existingReviewStatus == null ? '' : ' ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ ${item.existingReviewStatus}'}'
+                    : 'Share feedback for this delivered item',
+              ),
+              trailing: item.alreadyReviewed
+                  ? const Icon(Icons.check_circle_outline)
+                  : FilledButton(
+                      key: Key('writeReview-${item.orderItemId}'),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ReviewFormScreen(item: item),
+                        ),
+                      ),
+                      child: const Text('Write Review'),
+                    ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+ReviewProvider? _maybeReviewProvider(
+  BuildContext context, {
+  bool listen = true,
+}) {
+  try {
+    return listen
+        ? context.watch<ReviewProvider>()
+        : context.read<ReviewProvider>();
+  } on ProviderNotFoundException {
+    return null;
   }
 }

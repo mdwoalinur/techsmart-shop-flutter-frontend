@@ -4,6 +4,8 @@ enum NotificationCategory {
   returnRequest,
   cancellation,
   account,
+  support,
+  review,
   system,
   unknown,
 }
@@ -16,6 +18,8 @@ enum NotificationActionType {
   openReturnRequest,
   openCancellationRequest,
   openProfile,
+  openSupportTicket,
+  openReview,
   none,
   unknown,
 }
@@ -33,6 +37,8 @@ NotificationCategory notificationCategoryFrom(String? value) =>
       'RETURN' => NotificationCategory.returnRequest,
       'CANCELLATION' => NotificationCategory.cancellation,
       'ACCOUNT' => NotificationCategory.account,
+      'SUPPORT' => NotificationCategory.support,
+      'REVIEW' => NotificationCategory.review,
       'SYSTEM' => NotificationCategory.system,
       _ => NotificationCategory.unknown,
     };
@@ -42,8 +48,10 @@ String notificationCategoryCode(NotificationCategory value) => switch (value) {
   NotificationCategory.payment => 'PAYMENT',
   NotificationCategory.returnRequest => 'RETURN',
   NotificationCategory.cancellation => 'CANCELLATION',
-  NotificationCategory.account => 'ACCOUNT',
-  NotificationCategory.system => 'SYSTEM',
+  NotificationCategory.account => 'Account',
+  NotificationCategory.support => 'Support',
+  NotificationCategory.review => 'Reviews',
+  NotificationCategory.system => 'System',
   NotificationCategory.unknown => 'UNKNOWN',
 };
 
@@ -53,6 +61,8 @@ String notificationCategoryLabel(NotificationCategory value) => switch (value) {
   NotificationCategory.returnRequest => 'Returns',
   NotificationCategory.cancellation => 'Cancellations',
   NotificationCategory.account => 'Account',
+  NotificationCategory.support => 'Support',
+  NotificationCategory.review => 'Reviews',
   NotificationCategory.system => 'System',
   NotificationCategory.unknown => 'Other',
 };
@@ -74,6 +84,8 @@ NotificationActionType notificationActionTypeFrom(String? value) =>
       'OPEN_CANCELLATION_REQUEST' =>
         NotificationActionType.openCancellationRequest,
       'OPEN_PROFILE' => NotificationActionType.openProfile,
+      'OPEN_SUPPORT_TICKET' => NotificationActionType.openSupportTicket,
+      'OPEN_REVIEW' => NotificationActionType.openReview,
       'NONE' => NotificationActionType.none,
       _ => NotificationActionType.unknown,
     };

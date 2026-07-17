@@ -11,6 +11,9 @@ import '../compare/compare_screen.dart';
 import '../profile/change_password_screen.dart';
 import '../order/my_orders_screen.dart';
 import '../notification/notification_center_screen.dart';
+import '../support/support_tickets_screen.dart';
+import '../help/faq_screen.dart';
+import '../reviews/my_reviews_screen.dart';
 import '../profile/edit_profile_screen.dart';
 import '../profile/profile_screen.dart';
 import '../wishlist/wishlist_screen.dart';
@@ -69,7 +72,7 @@ class MenuScreen extends StatelessWidget {
                   leading: const Icon(Icons.shopping_bag_outlined),
                   title: const Text('Current Session Cart'),
                   subtitle: Text(
-                    '$cart total item${cart == 1 ? '' : 's'} â€” not synchronized',
+                    '$cart total item${cart == 1 ? '' : 's'} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â not synchronized',
                   ),
                 ),
               ],
@@ -181,6 +184,34 @@ class MenuScreen extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () => _logout(context),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            key: const Key('myReviewsMenu'),
+            leading: const Icon(Icons.rate_review_outlined),
+            title: const Text('My Reviews'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MyReviewsScreen()),
+            ),
+          ),
+          ListTile(
+            key: const Key('supportMenu'),
+            leading: const Icon(Icons.support_agent),
+            title: const Text('Help & Support'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SupportTicketsScreen()),
+            ),
+          ),
+          ListTile(
+            key: const Key('faqMenu'),
+            leading: const Icon(Icons.help_outline),
+            title: const Text('FAQ & Help Center'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FaqScreen()),
+            ),
           ),
         ],
       ),

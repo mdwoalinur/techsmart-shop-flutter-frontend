@@ -5,6 +5,7 @@ import '../../../provider/cart_provider.dart';
 import '../../../provider/compare_provider.dart';
 import '../../../provider/navigation_provider.dart';
 import '../../../provider/product_provider.dart';
+import '../../../provider/review_provider.dart';
 import '../../../provider/wishlist_provider.dart';
 import '../../../service/catalog/catalog_service.dart';
 import '../../theme/app_colors.dart';
@@ -30,12 +31,13 @@ class _Detail extends StatefulWidget {
 class _DetailState extends State<_Detail> {
   int quantity = 1;
   bool adding = false;
+  int? _reviewsLoadedFor;
   @override
   Widget build(BuildContext context) {
     final p = context.watch<ProductProvider>();
     final d = p.detail;
     if (p.isInitialLoading) {
-      return const Scaffold(body: CatalogLoading(label: 'Loading product…'));
+      return const Scaffold(body: CatalogLoading(label: 'Loading productâ€¦'));
     }
     if (d == null) {
       return Scaffold(
@@ -45,6 +47,12 @@ class _DetailState extends State<_Detail> {
           onRetry: p.retryDetail,
         ),
       );
+    }
+    if (_reviewsLoadedFor != d.id) {
+      _reviewsLoadedFor = d.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.read<ReviewProvider>().loadProduct(d.id);
+      });
     }
     final selected = p.selectedVariation;
     final image = selected?.imageUrl ?? d.imageUrl;
@@ -154,7 +162,7 @@ class _DetailState extends State<_Detail> {
             Chip(label: Text(d.stock.stockLabel)),
             const SizedBox(height: 12),
             Text('Product code: ${d.productCode}'),
-            Text('SKU: ${selected?.sku ?? d.sku ?? '—'}'),
+            Text('SKU: ${selected?.sku ?? d.sku ?? 'â€”'}'),
             if (d.category != null) Text('Category: ${d.category!.name}'),
             if (d.unit != null) Text('Unit: ${d.unit!.name} (${d.unit!.code})'),
             if (d.taxRate != null) Text('Tax rate: ${d.taxRate}%'),
@@ -214,6 +222,9 @@ class _DetailState extends State<_Detail> {
             const Text(
               'Final stock and price will be verified during checkout.',
             ),
+            _RatingSummary(detail: d),
+            const SizedBox(height: 12),
+            _ReviewsSection(productId: d.id),
             if (d.description?.trim().isNotEmpty ?? false) ...[
               const SizedBox(height: 22),
               Text(
@@ -310,4 +321,112 @@ class _DetailState extends State<_Detail> {
       ),
     );
   }
+}
+
+class _RatingSummary extends StatelessWidget {
+  const _RatingSummary({required this.detail});
+  final ProductDetail detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final reviews = context.watch<ReviewProvider>();
+    final summary = reviews.summary;
+    final rating = summary?.productId == detail.id
+        ? summary!.averageRating.asDouble
+        : detail.averageRating;
+    final count = summary?.productId == detail.id
+        ? summary!.reviewCount
+        : detail.reviewCount;
+    return Row(
+      children: [
+        _RatingStars(rating: rating.round()),
+        const SizedBox(width: 8),
+        Text(
+          count == 0
+              ? 'No reviews yet'
+              : '${rating.toStringAsFixed(1)} • $count review${count == 1 ? '' : 's'}',
+        ),
+      ],
+    );
+  }
+}
+
+class _ReviewsSection extends StatelessWidget {
+  const _ReviewsSection({required this.productId});
+  final int productId;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.watch<ReviewProvider>();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Customer reviews',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            TextButton(
+              onPressed: () => context.read<ReviewProvider>().loadProduct(
+                productId,
+                force: true,
+              ),
+              child: const Text('Refresh'),
+            ),
+          ],
+        ),
+        if (p.state == ReviewLoadState.loading && p.productReviews.isEmpty)
+          const LinearProgressIndicator()
+        else if (p.error != null && p.productReviews.isEmpty)
+          Text(p.error!, style: const TextStyle(color: Colors.red))
+        else if (p.productReviews.isEmpty)
+          const Text('Be the first to review this product after delivery.')
+        else
+          ...p.productReviews
+              .take(5)
+              .map(
+                (review) => Card(
+                  child: ListTile(
+                    leading: _RatingStars(rating: review.rating, compact: true),
+                    title: Text(
+                      review.title?.isNotEmpty == true
+                          ? review.title!
+                          : review.customerDisplayName,
+                    ),
+                    subtitle: Text(review.comment ?? ''),
+                  ),
+                ),
+              ),
+      ],
+    );
+  }
+}
+
+class _RatingStars extends StatelessWidget {
+  const _RatingStars({required this.rating, this.compact = false});
+  final int rating;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ...List.generate(
+        compact ? 1 : 5,
+        (index) => Icon(
+          compact || index < rating ? Icons.star : Icons.star_border,
+          size: compact ? 18 : 20,
+          color: Colors.amber.shade700,
+        ),
+      ),
+      if (compact)
+        Padding(
+          padding: const EdgeInsets.only(left: 2),
+          child: Text('$rating'),
+        ),
+    ],
+  );
 }

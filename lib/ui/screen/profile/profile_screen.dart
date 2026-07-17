@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../provider/auth_provider.dart';
 import '../../widget/customer/customer_avatar.dart';
 import 'edit_profile_screen.dart';
+import '../support/support_tickets_screen.dart';
+import '../help/faq_screen.dart';
+import '../reviews/my_reviews_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -89,6 +92,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 MaterialPageRoute(builder: (_) => const EditProfileScreen()),
               ),
               child: const Text('Edit Profile'),
+            ),
+            const SizedBox(height: 12),
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    key: const Key('profileSupportLink'),
+                    leading: const Icon(Icons.support_agent),
+                    title: const Text('Help & Support'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SupportTicketsScreen(),
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    key: const Key('profileFaqLink'),
+                    leading: const Icon(Icons.help_outline),
+                    title: const Text('FAQ & Help Center'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FaqScreen()),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    key: const Key('profileReviewsLink'),
+                    leading: const Icon(Icons.rate_review_outlined),
+                    title: const Text('My Reviews'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MyReviewsScreen(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

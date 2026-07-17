@@ -6,6 +6,8 @@ import '../../../provider/notification_provider.dart';
 import '../order/order_detail_screen.dart';
 import '../payment/payment_screen.dart';
 import '../profile/profile_screen.dart';
+import '../reviews/my_reviews_screen.dart';
+import '../support/support_ticket_detail_screen.dart';
 import '../../widget/notification/notification_bell.dart';
 
 class NotificationDetailScreen extends StatefulWidget {
@@ -88,6 +90,8 @@ class _NotificationDetailScreenState extends State<NotificationDetailScreen> {
     NotificationActionType.openReturnRequest => 'View Return',
     NotificationActionType.openCancellationRequest => 'View Cancellation',
     NotificationActionType.openProfile => 'View Profile',
+    NotificationActionType.openSupportTicket => 'View Support Ticket',
+    NotificationActionType.openReview => 'View Reviews',
     _ => null,
   };
 
@@ -118,6 +122,22 @@ class _NotificationDetailScreenState extends State<NotificationDetailScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const ProfileScreen()),
+        );
+        break;
+      case NotificationActionType.openSupportTicket:
+        if (ref != null && ref.isNotEmpty) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => SupportTicketDetailScreen(ticketNumber: ref),
+            ),
+          );
+        }
+        break;
+      case NotificationActionType.openReview:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MyReviewsScreen()),
         );
         break;
       default:

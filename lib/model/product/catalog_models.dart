@@ -278,8 +278,12 @@ class ProductDetail extends ProductSummary {
     super.unit,
     required super.stock,
     required this.variations,
+    this.averageRating = 0,
+    this.reviewCount = 0,
   });
   final List<ProductVariation> variations;
+  final double averageRating;
+  final int reviewCount;
   factory ProductDetail.fromJson(Object? value) {
     final j = requireMap(value, 'productDetail');
     final p = ProductSummary.fromJson(j);
@@ -305,6 +309,8 @@ class ProductDetail extends ProductSummary {
       unit: p.unit,
       stock: p.stock,
       variations: List.unmodifiable(raw.map(ProductVariation.fromJson)),
+      averageRating: (j['averageRating'] as num?)?.toDouble() ?? 0,
+      reviewCount: (j['reviewCount'] as num?)?.toInt() ?? 0,
     );
   }
 }

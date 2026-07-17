@@ -7,6 +7,9 @@ import 'provider/order_provider.dart';
 import 'provider/offer_provider.dart';
 import 'provider/payment_provider.dart';
 import 'provider/notification_provider.dart';
+import 'provider/review_provider.dart';
+import 'provider/support_provider.dart';
+import 'provider/help_provider.dart';
 import 'provider/category_provider.dart';
 import 'provider/checkout_provider.dart';
 import 'provider/cart_provider.dart';
@@ -22,6 +25,9 @@ import 'service/order/order_service.dart';
 import 'service/offer/offer_service.dart';
 import 'service/payment/payment_service.dart';
 import 'service/notification/notification_service.dart';
+import 'service/review/review_service.dart';
+import 'service/support/support_service.dart';
+import 'service/help/help_service.dart';
 import 'service/storage/secure_session_storage.dart';
 import 'service/shopping/customer_shopping_service.dart';
 import 'ui/navigation/main_navigation_shell.dart';
@@ -57,6 +63,9 @@ class TechSmartShopApp extends StatelessWidget {
     final orders = OrderService(client);
     final payments = PaymentService(client);
     final notifications = NotificationService(client);
+    final reviews = ReviewService(client);
+    final support = SupportService(client);
+    final help = HelpService(client);
     return MultiProvider(
       providers: [
         Provider<ApiClient>.value(value: client),
@@ -85,6 +94,13 @@ class TechSmartShopApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => NotificationProvider(notifications, authProvider),
         ),
+        ChangeNotifierProvider(
+          create: (_) => ReviewProvider(reviews, authProvider),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SupportProvider(support, authProvider),
+        ),
+        ChangeNotifierProvider(create: (_) => HelpProvider(help)),
         ChangeNotifierProvider(
           create: (_) => CategoryProvider(catalog)..load(rootOnly: true),
         ),
